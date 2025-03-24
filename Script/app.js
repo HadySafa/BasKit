@@ -63,9 +63,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const nameError = document.getElementById('nameError');
         const passwordError = document.getElementById('passwordError');
         const numberError = document.getElementById('numberError');
-        const fullNameInput = document.getElementById('FullName');
+        const fullNameInput = document.getElementById('Name');
         const emailInput = document.getElementById('Email');
-        const numberInput = document.getElementById('Number');
+        const numberInput = document.getElementById('Phone');
         const passwordInput = document.getElementById('Password');
 
         // Clear any previous error messages

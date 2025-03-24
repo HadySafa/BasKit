@@ -1,3 +1,17 @@
+<?php
+
+require_once './Backend/Controller/Controller.php';
+
+$controller = new Controller();
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['Email']) && isset($_POST['Password'])) {
+        $controller->validateUser($_POST);
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
