@@ -4,7 +4,7 @@ require_once './Backend/Controller/databaseAccess.php';
 require_once './Backend/Model/User.php';
 
 class Controller
-{
+{   
 
     private $databaseAccess;
 
@@ -12,6 +12,9 @@ class Controller
     {
         $this->databaseAccess = new databaseAccess();
     }
+
+
+    // Hady's Part
 
     public function addUser($submittedInfo)
     {
@@ -29,4 +32,8 @@ class Controller
             else header('Location: ./Login.php');
         }
     }
+
+    // Amir's Part
+
+    // Write your code here
 }

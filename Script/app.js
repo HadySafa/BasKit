@@ -1,3 +1,5 @@
+// Hady's part
+
 // Login form validation
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -137,3 +139,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+
+// Amir's part

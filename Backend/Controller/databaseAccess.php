@@ -15,6 +15,9 @@ class databaseAccess
         self::$connection = self::createConnection();
     }
 
+    // Hady's Part
+
+    // check security!!
     private static function createConnection()
     {
         if (self::$connection == null) {
@@ -66,4 +69,6 @@ class databaseAccess
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         return $hashedPassword;
     }
+
+    // Amir's Part
 }
