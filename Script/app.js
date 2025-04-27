@@ -1,11 +1,11 @@
 // Hady's part
 
 // Login form validation
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 
-    document.getElementById('LoginForm').addEventListener('submit', function(event) {
+    document.getElementById('LoginForm').addEventListener('submit', function (event) {
 
-        event.preventDefault(); 
+        event.preventDefault();
 
 
         const emailError = document.getElementById('emailError');
@@ -55,11 +55,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Registration form validation
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 
-    document.getElementById('RegisterForm').addEventListener('submit', function(event) {
+    document.getElementById('RegisterForm').addEventListener('submit', function (event) {
 
-        event.preventDefault(); 
+        event.preventDefault();
 
         const emailError = document.getElementById('emailError');
         const nameError = document.getElementById('nameError');
@@ -139,6 +139,74 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Change password form validation
+document.addEventListener('DOMContentLoaded', function () {
+
+    document.getElementById('ChangePasswordForm').addEventListener('submit', function (event) {
+
+        event.preventDefault();
+        isValid = true;
+
+        const oldPasswordInput = document.getElementById('OldPassword');
+        const oldPasswordError = document.getElementById('oldPasswordError');
+        const newPasswordInput = document.getElementById('NewPassword');
+        const newPasswordError = document.getElementById('newPasswordError');
+
+        // Reset
+        oldPasswordError.textContent = '';
+        oldPasswordInput.classList.remove('input-error');
+        newPasswordError.textContent = '';
+        newPasswordInput.classList.remove('input-error');
+
+        // Validate old password
+        const oldPasswordValue = oldPasswordInput.value.trim();
+        const passwordPattern = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
+        if (!oldPasswordValue) {
+            oldPasswordError.textContent = 'Password is required';
+            oldPasswordInput.classList.add('input-error');
+            isValid = false;
+        } else if (oldPasswordValue.length < 8) {
+            oldPasswordError.textContent = 'Password must be at least 8 characters';
+            oldPasswordInput.classList.add('input-error');
+            isValid = false;
+        } else if (!passwordPattern.test(oldPasswordValue)) {
+            oldPasswordError.textContent = 'Password must contain both letters and numbers';
+            oldPasswordInput.classList.add('input-error');
+            isValid = false;
+        }
+
+        // Validate new password
+        const newPasswordValue = newPasswordInput.value.trim();
+        if (!newPasswordValue) {
+            newPasswordError.textContent = 'Password is required';
+            newPasswordInput.classList.add('input-error');
+            isValid = false;
+        } else if (newPasswordValue.length < 8) {
+            newPasswordError.textContent = 'Password must be at least 8 characters';
+            newPasswordInput.classList.add('input-error');
+            isValid = false;
+        } else if (!passwordPattern.test(newPasswordValue)) {
+            newPasswordError.textContent = 'Password must contain both letters and numbers';
+            newPasswordInput.classList.add('input-error');
+            isValid = false;
+        }
+
+        // Everything is valid
+        if (isValid) {
+            document.getElementById('ChangePasswordForm').submit()
+        }
+
+    })
+
+})
+
+// toggle the navigation bar in the header
+document.addEventListener("DOMContentLoaded", function(){
+    document.getElementById('bars-btn').addEventListener('click', function () {
+        document.getElementById('dropdown-menu').classList.toggle('active');
+    });
+})
 
 
 // Amir's part

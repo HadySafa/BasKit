@@ -6,9 +6,10 @@ require_once './Backend/Controller/Controller.php';
 
 $controller = new Controller();
 
+$msg = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['Name']) && isset($_POST['Email']) && isset($_POST['Phone']) && isset($_POST['Password'])) {
-        $controller->addUser($_POST);
+        $msg = $controller->addUser($_POST);
     }
 }
 
@@ -23,12 +24,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Register</title>
     <link rel="stylesheet" href="./Style/elements.css">
     <link rel="stylesheet" href="./Style/forms.css">
+    <link rel="stylesheet" href="./Style/layout.css">
     <script src="./Script/app.js"></script>
 </head>
 
 <body>
 
-    <div class="form-container">
+    <div class="container-40">
 
         <form id="RegisterForm" class="form" method="post">
 
@@ -83,6 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <h4> Login</h4>
                     </a></p>
             </div>
+
+            <?php if($msg) echo "<script>alert('$msg')</script>"; ?>
 
         </form>
 

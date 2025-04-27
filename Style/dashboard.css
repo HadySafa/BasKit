@@ -1,6 +1,7 @@
 :root {
-    --color1: #124559;
-    --color2: #eff6e0;
+   /* color1 124559 */
+   --color1: #1d4ed8;
+    --color2: #edf2f4;
     --color3: #0e3a46;
 }
 
@@ -19,26 +20,12 @@ body {
     background-color: var(--color2);
 }
 
-.icon{
-    min-height: 1rem;
-    max-height: 1rem;
-    min-width: 1rem;
-    max-width: 1rem;
-}
-
-
-
 .container {
-    min-width: 80vw;
-    max-width: 80vw;
     background-color: var(--color1);
-
     display: flex;
     flex-direction: column;
     gap: 2rem;
-
     padding:2rem;
-
     border-radius: 5px;
 }
 
@@ -46,14 +33,6 @@ body {
     background-color: white;
     border-radius: 5px;
 }
-
-.links>.button{
-    border-bottom: 1px solid lightgray;
-}
-
-
-
-
 
 .info{
     display: flex;
@@ -84,37 +63,36 @@ body {
     padding: 12px;
 }
 
-.button{
-    background-color: inherit;
-    color: black;
-    cursor: pointer;
-    padding: 12px;
-    border: none;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    outline: none;
-    min-width: 100%;
-    max-width: 100%;
+/* Order-Details page */
+
+.orderMainContainer{
     display: flex;
-    gap: 12px;
-    text-decoration: none;
-    align-items: center;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 7rem;
+    max-height: 100vh;
 }
 
-.button:hover, .button:focus{
-    background-color: var(--color2);
+.section-item-layout{
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
 }
 
-@media (min-width: 650px) {
-    .container {
-        min-width: 60vw;
-        max-width: 60vw;
-    }
+.section-header{
+    font-weight: bold;
+    font-size: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid black;
 }
 
-@media (min-width: 1024px) {
-    .container {
-        min-width: 40vw;
-        max-width: 40vw;
-    }
+.section-footer{
+    border-top: 1px solid black;
+    padding-top: 0.5rem;
 }
+
+.bold-text{
+    font-weight: bold;
+}
+
+/* ------------------ */

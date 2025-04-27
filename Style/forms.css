@@ -1,8 +1,9 @@
 /* Hady's part */
 
 :root {
-    --color1: #124559;
-    --color2: #eff6e0;
+    /* color1 124559 */
+    --color1: #1d4ed8;
+    --color2: #edf2f4;
     --color3: #0e3a46;
 }
 
@@ -19,11 +20,8 @@ body {
     align-items: center;
     height: 100vh;
     background-color: var(--color2);
-}
 
-.form-container {
-    min-width: 80vw;
-    max-width: 80vw;
+    margin-bottom: 3rem;
 }
 
 .link{
@@ -35,20 +33,6 @@ body {
 
 .link a, .link a:hover, .link a:visited, .link a:active{
     color: var(--color1);
-}
-
-@media (min-width: 650px) {
-    .form-container {
-        min-width: 70vw;
-        max-width: 70vw;
-    }
-}
-
-@media (min-width: 1024px) {
-    .form-container {
-        min-width: 60vw;
-        max-width: 60vw;
-    }
 }
 
 /* Amir's part */

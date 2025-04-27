@@ -1,0 +1,39 @@
+/*
+    -- This is a general CSS file --
+    container-60 is a responsive container that has a width of 60vw on large screens
+    container-40 is a responsive container that has a width of 40vw on large screens
+*/
+
+.container-60 {
+    min-width: 80vw;
+    max-width: 80vw;
+}
+
+.container-40 {
+    min-width: 80vw;
+    max-width: 80vw;
+}
+
+@media (min-width: 650px) {
+    .container-60 {
+        min-width: 70vw;
+        max-width: 70vw;
+    }
+
+    .container-40 {
+        min-width: 60vw;
+        max-width: 60vw;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container-60 {
+        min-width: 60vw;
+        max-width: 60vw;
+    }
+
+    .container-40 {
+        min-width: 40vw;
+        max-width: 40vw;
+    }
+}

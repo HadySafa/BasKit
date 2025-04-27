@@ -6,9 +6,11 @@ require_once './Backend/Controller/Controller.php';
 
 $controller = new Controller();
 
+$msg = '';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['Email']) && isset($_POST['Password'])) {
-        $controller->validateUser($_POST);
+        $msg = $controller->validateUser($_POST);
     }
 }
 
@@ -22,13 +24,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="./Style/elements.css">
+    <link rel="stylesheet" href="./Style/layout.css">
     <link rel="stylesheet" href="./Style/forms.css">
     <script src="./Script/app.js"></script>
 </head>
 
 <body>
 
-    <div class="form-container">
+    <div class="container-40">
 
         <form id="LoginForm" class="form" method="post">
 
@@ -57,8 +60,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <button class="submit" type="submit">Sign In</button>
 
+            <?php if($msg) echo "<script>alert('$msg')</script>"; ?>
+
             <div class="link">
-                <p>New to Market-Name?<a href="./Register.php"><h4> Register an Acccount</h4></a></p>
+                <p>New to BasKit?<a href="./Register.php"><h4> Register an Acccount</h4></a></p>
             </div>
 
         </form>
