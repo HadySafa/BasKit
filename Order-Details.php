@@ -9,6 +9,19 @@ $controller = new Controller();
 // Check if user requesting the page is logged in
 $controller->checkLoggedIn();
 
+// Deliver order - done by the admin
+$msg = '';
+if ($controller->isAdmin() && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $msg = $controller->deliverOrder($_POST['Id']);
+    if (!$msg) {
+        header('Location: ./Order-Details.php?Id=' . $_POST['Id']);
+        exit();
+    } else {
+        header('Location: ./Manage-Orders.php');
+        exit();
+    }
+}
+
 // Get the order id requested (by customer or admin)
 $submittedId = '';
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['Id'])) {
@@ -25,20 +38,6 @@ $links = ["Home" => "./index.php", "Profile" => "./User.php"];
 $activeLink = "";
 $showButton = false;
 
-// Deliver order - done by the admin
-$msg = '';
-if ($controller->isAdmin() && $_SERVER['REQUEST_METHOD'] == 'POST') {
-    $msg = $controller->deliverOrder($_POST['Id']);
-    if ($msg) {
-        echo $msg;
-        header('Location: ./Order-Details.php?Id=' . $_POST['Id']);
-        exit();
-    } else {
-        header('Location: ./Manage-Orders.php');
-        exit();
-    }
-}
-
 
 // temporary code, the order object must contain an array of products object
 $order = '';
@@ -53,7 +52,7 @@ if ($controller->isCustomer()) {
     $products = $controller->getOrdersProducts($submittedId);
 }
 
-// display the message returned from the controller if order not found or an error occured
+// display error messages
 if (!is_array($order)) {
     echo "<script>alert('$order')</script>";
     exit();
@@ -62,6 +61,10 @@ if (!is_array($products)) {
     echo "<script>alert('$products')</script>";
     exit();
 }
+if($msg){
+    echo "<script>alert('$msg')</script>";
+}
+
 
 // functions to render HTML
 function formatDate($date)
@@ -136,9 +139,9 @@ function calculateTotal($products)
                 </div>
 
                 <?php
-                    foreach ($products as $product) {
-                        echo displayProduct($product);
-                    }
+                foreach ($products as $product) {
+                    echo displayProduct($product);
+                }
                 ?>
 
                 <div class="section-item-layout section-footer bold-text">
@@ -152,7 +155,7 @@ function calculateTotal($products)
 
                 <div class='buttons-container'>
                     <a href="<?php echo './Receipt/index.php?Id=' . $order['Id']; ?>" class="button">Digital Receipt</a>
-                    <a class="submit">Give Feedback</a>
+                    <a href="./Feedback.php" class="submit">Give Feedback</a>
                 </div>
 
             <?php endif; ?>
@@ -160,8 +163,8 @@ function calculateTotal($products)
             <?php if ($controller->isAdmin() && $controller->isPending($order)): ?>
 
                 <div class='buttons-container'>
-                    <form method="post">
-                        <input type="hidden" name="Id" value="<?php echo $order["Id"]; ?>">
+                    <form method="post" action="">
+                        <input type="hidden" name="Id" value="<?php echo $order['Id']; ?>">
                         <button type="submit" class="submit">Deliver Order</button>
                     </form>
                 </div>

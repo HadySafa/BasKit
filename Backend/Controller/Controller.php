@@ -323,8 +323,9 @@ class Controller
         $rowCount = $this->databaseAccess->updateOrderStatus($id, 'Completed');
         if (is_numeric($rowCount) && $rowCount > 0) {
             // successfully changed
-            return '';
-        } else return 'Action Failed';
+            return 'succesfully  changed';
+        } 
+        else return 'Action Failed';
     }
 
     /////////////////////////////////////////////////////////
