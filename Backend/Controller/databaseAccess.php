@@ -51,7 +51,6 @@ class databaseAccess
         } catch (PDOException $e) {
             return $e->getMessage();
         }
-
     }
 
     public function updateUserPassword($id, $password)
@@ -133,7 +132,8 @@ class databaseAccess
         }
     }
 
-    function hashPassword($password){
+    function hashPassword($password)
+    {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         return $hashedPassword;
     }
@@ -151,7 +151,7 @@ class databaseAccess
             echo $query;
             self::$connection = self::createConnection();
             $result = self::$connection->prepare($query);
-            $result->execute([$order->getUserId(), $order->getTime(),$order->getPaymentMethod(),$order->getOrderType(),$order->getLocation(),$order->getStatus()]);
+            $result->execute([$order->getUserId(), $order->getTime(), $order->getPaymentMethod(), $order->getOrderType(), $order->getLocation(), $order->getStatus()]);
             return $result->rowCount();
         } catch (PDOException $e) {
             return $e->getMessage();
@@ -289,6 +289,57 @@ class databaseAccess
 
     ///////////////////////////////////////////////////
 
+    // Hardware Part - dealing with associative array for now, fix it later
+
+    public function getProductIdByBarcode($barcode) 
+    {
+        $query = "SELECT Id FROM Product WHERE Barcode = ?";
+
+        try {
+            self::$connection = self::createConnection();
+            $result = self::$connection->prepare($query);
+            $result->execute([$barcode]);
+            $data = $result->fetchAll(PDO::FETCH_ASSOC);
+            if (is_array($data) && isset($data[0]['Id'])) return $data[0]["Id"];
+            return -1;
+        } catch (PDOException $e) {
+            return -1;
+        }
+    }
+
+    public function addToSession($userId, $basketId, $sessionId)
+    {
+        $query = "INSERT INTO session (userId, session_id, basketId) VALUES (?, ?, ?)";
+
+        try {
+            self::$connection = self::createConnection();
+            $result = self::$connection->prepare($query);
+            $result->execute([$userId,$sessionId,$basketId]);
+            return $result->rowCount();
+        } catch (PDOException $e) {
+            return -1;
+        }
+    }
+
+    public function getSessionId($basketId){
+        $query  = "Select session_id FROM session WHERE basketId = ?";
+
+        try {
+            self::$connection = self::createConnection();
+            $result = self::$connection->prepare($query);
+            $result->execute([$basketId]);
+            $data = $result->fetchAll(PDO::FETCH_ASSOC);
+            if (count($data) > 0) {
+                return $data[0]['session_id'];
+            }
+            return "";
+        } catch (PDOException) {
+            return null;
+        }
+    }
+
+    ///////////////////////////////////////////////////
+
     // Temporary method
     public function getOrdersProducts($id)
     {
@@ -311,5 +362,4 @@ class databaseAccess
             return null;
         }
     }
-
 }

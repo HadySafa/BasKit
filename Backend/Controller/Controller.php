@@ -29,7 +29,7 @@ class Controller
         $_SESSION["Name"] = $user->getName();
         $_SESSION["Balance"] = $user->getBalance();
         $_SESSION["Role"] = $user->getRole();
-        $_SESSION["OrderType"] = "Online";
+        $_SESSION["Products"] = [];
     }
 
     public function getSessionInfo()
@@ -40,6 +40,11 @@ class Controller
     public function getUserId()
     {
         return $_SESSION["Id"];
+    }
+
+    public function getBasketId()
+    {
+        return $_SESSION["BasketId"];
     }
 
     public function isAdmin()
@@ -163,13 +168,19 @@ class Controller
         }
     }
 
-    public function validateUser($submittedInfo)
+    public function validateUser($submittedInfo, $info)
     {
         $tempUser = $this->databaseAccess->getUserByEmail($submittedInfo['Email']);
         if ($tempUser) {
             if ($tempUser->isActive() && password_verify($submittedInfo['Password'], $tempUser->getPassword())) {
-                $this->startSession($tempUser);
-                header('Location: ./index.php');
+                // user validated
+                if (is_array($info)) {
+                    $this->startPhysicalSession($tempUser, $info);
+                    header('Location: ./Cart.php');
+                } else {
+                    $this->startSession($tempUser);
+                    header('Location: ./index.php');
+                }
                 return '';
             } else return "Wrong credentials.";
         } else {
@@ -324,8 +335,7 @@ class Controller
         if (is_numeric($rowCount) && $rowCount > 0) {
             // successfully changed
             return 'succesfully  changed';
-        } 
-        else return 'Action Failed';
+        } else return 'Action Failed';
     }
 
     /////////////////////////////////////////////////////////
@@ -345,5 +355,69 @@ class Controller
     }
 
     /////////////////////////////////////////////////////////
+
+    // Hardware part
+
+    public function addProductToBasket($barcode) // this is dealing with an assoc array for now, fix it for later
+    {
+        // check basket id
+
+        $productId = $this->databaseAccess->getProductIdByBarcode($barcode);
+
+        if ($productId > 0) { // valid product id & no errors, add it to session
+            $this->addProductToSession($productId);
+            header("Location: ./Cart.php");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function addProductToSession($id)
+    {
+        if (array_key_exists($id, $_SESSION["Products"])) { // product exists, increment the quantity
+            $_SESSION["Products"][$id]++;
+        } else { // product doesn't exists, add it
+            $_SESSION["Products"][$id] = 1;
+        }
+    }
+
+    public function startPhysicalSession($user, $info)
+    {
+        $_SESSION["Id"] = $user->getId();
+        $_SESSION["Name"] = $user->getName();
+        $_SESSION["Balance"] = $user->getBalance();
+        $_SESSION["Role"] = $user->getRole();
+        $_SESSION["OrderType"] = $info["Type"];
+        $_SESSION["BasketId"] = $info["Basket"];
+        $_SESSION["Products"] = [];
+        $this->saveSession($info["Basket"]);
+    }
+
+    private function saveSession($basketId){
+        $rowCount = $this->databaseAccess->addToSession($this->getUserId(),$basketId,$this->getSessionId());
+        if($rowCount > 0){ // added to session
+            return true;
+        }
+        return false;
+    }
+
+    public function returnSessionId($basketId){
+        $sessionId = $this->databaseAccess->getSessionId($basketId);
+        if($sessionId) return $sessionId;
+    }
+
+    private function getSessionId()
+    {
+        if (isset($_SESSION['Id'])) {
+            return session_id();
+        } else {
+            return "";
+        }
+    }
+
+
+    /////////////////////////////////////////////////////////
+
 
 }

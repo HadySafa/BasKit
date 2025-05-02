@@ -6,11 +6,17 @@ require_once './Backend/Controller/Controller.php';
 
 $controller = new Controller();
 
+// handle form submisssion
 $msg = '';
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['Email']) && isset($_POST['Password'])) {
-        $msg = $controller->validateUser($_POST);
+        if (!empty($_GET['session']) && !empty($_GET['basket-id'])) {
+            $type = $_GET['session'] == 'in-store' ? "in-store" : "online";
+            $basket = is_numeric($_GET['basket-id']) ? $_GET['basket-id'] : null;
+            $msg = $controller->validateUser($_POST, ["Type" => $type, "Basket" => $basket]);
+        } else {
+            $msg = $controller->validateUser($_POST, null);
+        }
     }
 }
 
@@ -37,10 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <div class="form-group">
                 <label for="Email">Email Address</label>
-                <input 
-                    type="text" 
-                    id="Email" 
-                    name="Email" 
+                <input
+                    type="text"
+                    id="Email"
+                    name="Email"
                     class="input"
                     placeholder="example@example.com"
                     autofocus>
@@ -49,10 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <div class="form-group">
                 <label for="Password">Password</label>
-                <input 
-                    type="password" 
-                    id="Password" 
-                    name="Password" 
+                <input
+                    type="password"
+                    id="Password"
+                    name="Password"
                     class="input"
                     placeholder="********">
                 <div id="passwordError" class="error-message"> </div>
@@ -60,10 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <button class="submit" type="submit">Sign In</button>
 
-            <?php if($msg) echo "<script>alert('$msg')</script>"; ?>
+            <?php if ($msg) echo "<script>alert('$msg')</script>"; ?>
 
             <div class="link">
-                <p>New to BasKit?<a href="./Register.php"><h4> Register an Acccount</h4></a></p>
+                <p>New to BasKit?<a href="./Register.php">
+                        <h4> Register an Acccount</h4>
+                    </a></p>
             </div>
 
         </form>
