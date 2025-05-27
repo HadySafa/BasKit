@@ -11,8 +11,10 @@ $msg = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!empty($_POST['Location']) && !empty($_POST['PaymentMethod'])) {
         $msg = $controller->submitOrder($_POST);
+        echo $msg;
     }
 }
+
 
 // define dropdown info -- can be adjusted to be set by the admin
 $locations = ["Beirut", "Mount Lebanon", "North Lebanon", "Akkar", "Bekaa", "Baalbek-Hermel", "South Lebanon", "Nabatieh"];
@@ -41,7 +43,7 @@ $showButton = false;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Checkout</title>
     <link rel="stylesheet" href="./Style/elements.css">
     <link rel="stylesheet" href="./Style/layout.css">
     <link rel="stylesheet" href="./Style/forms.css">

@@ -51,3 +51,5 @@ if ($barcode && $basketId) { // values are ready here
     ]);
 
 }
+
+

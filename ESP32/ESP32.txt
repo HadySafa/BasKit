@@ -1,0 +1,82 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+
+const char* ssid = "SAFA - 4";
+const char* password = "safa@2024";
+const char* server = "http://192.168.0.101/Senior";
+
+String sessionId = "";
+const int basketNumber = 1;
+
+void setup() {
+  Serial.begin(115200);
+  Serial2.begin(9600, SERIAL_8N1, 16, 17); // RX TX - Communication with arduino
+
+  delay(500);
+
+  WiFi.begin(ssid, password);
+  Serial2.print("Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial2.print(".");
+  }
+  Serial2.println("\nConnected to WiFi");
+
+  delay(500);
+
+  // Get the session Id
+  HTTPClient http;                                                                  // Http object used for making HTTP requests
+  http.begin(String(server) + "/ESP32/get.php?Basket-Id=" + String(basketNumber));  // Initialize the HTTP client with the specified URL
+  int httpCode = http.GET();                                                        // Make a get request
+  if (httpCode > 0) {
+    Serial2.printf("HTTP Response code: %d\n", httpCode);  // print the http code - for debugging purposes
+    sessionId = http.getString();                         // Retrieve the session Id
+    Serial2.println(sessionId);
+  } else {
+    Serial2.println("Error in HTTP request/response - GET");  // print error - for debugging purposes
+  }
+  http.end();
+
+
+}
+
+void loop() {
+
+  if (Serial2.available()) {
+    String barcode = Serial2.readStringUntil('\n');
+    if (barcode.length() > 6) {
+      HTTPClient http;
+      http.begin(String(server) + "/ESP32/post.php");
+
+      DynamicJsonDocument doc(1024);
+      doc["Barcode"] = barcode;
+      String postData;
+      serializeJson(doc, postData);
+
+      http.addHeader("Content-Type", "application/json");
+      http.addHeader("Cookie", "PHPSESSID=" + sessionId);
+
+      int httpCode = http.POST(postData);
+      if (httpCode > 0) {
+        Serial2.printf("HTTP Response code: %d\n", httpCode);
+        String payload = http.getString();
+        Serial2.println(payload);
+        DynamicJsonDocument responseDoc(1024);
+        DeserializationError error = deserializeJson(responseDoc, payload);
+        if (error) {
+          Serial2.println("Failed to parse JSON! - POST");
+        } else {
+          String message = responseDoc["message"];
+          Serial2.println(message);
+        }
+      } else {
+        Serial2.println("Error in HTTP request/response. - POST");
+      }
+      http.end();
+    }
+    else{
+      Serial2.println("Bad barcode");
+    }
+  }
+}

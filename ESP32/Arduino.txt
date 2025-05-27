@@ -1,0 +1,95 @@
+#include <SoftwareSerial.h>
+#include <PS2Keyboard.h>
+#include "HX711.h"
+
+HX711 scale;                       // for the weight sensor
+PS2Keyboard keyboard;              // for the scanner
+SoftwareSerial espSerial(10, 11);  // RX TX - For communication with esp32
+
+// -- Scanner --
+const int DataPin = 2;
+const int IRQpin = 3;
+
+String scannedData = "";         // To store the scanned barcode data
+unsigned long lastTime = 0;      // Timer to check timeout
+unsigned long timeout = 500;     // Timeout
+unsigned long lastScanTime = 0;  // Last time user scanned a barcode
+
+// -- Weight Sensor --
+#define LOADCELL_DOUT_PIN 4
+#define LOADCELL_SCK_PIN 5
+#define calibration_factor -392.64
+
+// -- Monitoring of weight difference --
+bool waitingForWeight = false;
+const int maxWait = 3000;
+float referenceWeight = 0;  // of the scanned products
+
+void setup() {
+
+  Serial.begin(9600);                                // Serial monitor
+  espSerial.begin(9600);                             // Communication with esp32
+  scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);  // Load sensor
+  scale.set_scale(calibration_factor);               // set the callibration factor
+  scale.tare();
+  keyboard.begin(DataPin, IRQpin);  // Barcode scanner
+  Serial.println("Scanner Ready.");
+}
+
+void loop() {
+
+  // read the characters, and add them to the barcode string
+  if (keyboard.available()) {
+    uint8_t code = keyboard.read();  // scanned code
+    scannedData += (char)code;
+    lastTime = millis();  // refresh timer after each scan
+  }
+
+  // when timeout occurs -> barcode scan is done -> start waiting for change in weight
+  if (!waitingForWeight && (millis() - lastTime > timeout) && scannedData.length() > 6) {  // If timeout occurs, consider it the end of scan
+    Serial.println(scannedData);
+    waitingForWeight = true;  // start waiting for weight change
+    lastScanTime = millis();  // reuse for weight timer
+  }
+
+  // waiting for change in weight
+  if (waitingForWeight) {
+
+    // check difference between current weight and reference weight
+    float currentWeight = scale.get_units();
+    float weightDiff = currentWeight - referenceWeight;
+
+    if (weightDiff > 5.0) {
+      Serial.print("Weight change detected. Barcode accepted: ");
+      referenceWeight = scale.get_units();  // update reference weight
+      espSerial.println(scannedData);       // send the entire string
+      waitingForWeight = false;
+      scannedData = "";                              // clear after success
+    } else if (millis() - lastScanTime > maxWait) {  // timeout
+      Serial.println("Timeout! No sufficient weight change. Barcode released.");
+      waitingForWeight = false;
+      scannedData = "";  // release the barcode
+    }
+
+  } 
+
+  // check for any messages from esp32
+  if (espSerial.available()) {
+    Serial.println("From ESP32: " + espSerial.readStringUntil('\n'));  // read data sent back from the esp32
+  }
+}
+
+/*
+
+  Scenarios:
+
+      - barcode scan + weight difference => submit barcode ... done
+
+      - barcode scan + no weight difference => release barcode ... done
+
+      - positive weight difference + no barcode scan => error
+
+      - negative weight difference => product removed
+
+
+*/

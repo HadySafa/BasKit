@@ -20,7 +20,7 @@ if (!empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST') 
 
 // modify header
 
-$links = ["Home" => "./index.php", "Profile" => "./User.php"];
+$links = ["Home" => "./LandingPage.php", "Profile" => "./User.php"];
 $activeLink = "Profile";
 $showButton = false;
 
@@ -67,7 +67,7 @@ $showButton = false;
                 <img class="icon" src="./Icons/list.svg" alt="icon" />
                 <h4>Orders</h4>
             </a>
-            <a href="" class="link-button">
+            <a href="ShoppingList.php" class="link-button">
                 <img class="icon" src="./Icons/clipboard.svg" alt="icon" />
                 <h4>Purchase List</h4>
             </a>

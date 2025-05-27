@@ -6,6 +6,13 @@ require_once './Backend/Controller/Controller.php';
 
 $controller = new Controller();
 
+// modify header
+
+$links = ["Home" => "./LandingPage.php"];
+$activeLink = "Home";
+$showButton = false;
+
+
 // handle form submisssion
 $msg = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -36,6 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
+
+    <?php include "./Header.php"?>
 
     <div class="container-40">
 

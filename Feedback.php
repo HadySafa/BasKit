@@ -9,6 +9,10 @@ $controller = new Controller();
 // check if the customer is logged in
 $controller->checkCustomerLogin();
 
+$links = ["Home" => "./LandingPage.php"];
+$activeLink = "Home";
+$showButton = false;
+
 $msg = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['Description'])) {
@@ -35,6 +39,9 @@ if($msg) echo "<script>alert('$msg')</script>";
 
 <body>
 
+
+    <?php include "./Header.php"?>
+    
     <div class="container-40">
 
         <form class="form" method="post">

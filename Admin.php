@@ -2,17 +2,19 @@
 
 <?php
 
+// done
+
 require_once './Backend/Controller/Controller.php';
 $controller = new Controller();
 
-// check if the customer is logged in
+// check if the customer is logged in as an admin
 $controller->checkAdminLogin();
 
 // check for logout
 if (!empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST') $controller->logout();
 
 // modify header
-$links = ["Home" => "./index.php", "Profile" => "./Admin.php"];
+$links = ["Profile" => "./Admin.php"];
 $activeLink = "Profile";
 $showButton = false;
 
@@ -32,26 +34,21 @@ $showButton = false;
 
 <body>
 
-    <?php include './Header.php'; ?>
-
+     <?php include "./Header.php"?>
     <div class="container-40 container">
 
         <section class="links">
-            <a href="" class="link-button">
+            <a href="ManageUsers.php" class="link-button">
                 <img class="icon" src="./Icons/users.svg" alt="icon" />
                 <h4>Users Management</h4>
             </a>
-            <a href="" class="link-button">
+            <a href="ManageProducts.php" class="link-button">
                 <img class="icon" src="./Icons/settings.svg" alt="icon" />
                 <h4>Products Management</h4>
             </a>
             <a href="./Manage-Orders.php" class="link-button">
                 <img class="icon" src="./Icons/clipboard.svg" alt="icon" />
                 <h4>Orders Management</h4>
-            </a>
-            <a href="" class="link-button">
-                <img class="icon" src="./Icons/plus.svg" alt="icon" />
-                <h4>Stock Management</h4>
             </a>
         </section>
 

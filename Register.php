@@ -6,6 +6,11 @@ require_once './Backend/Controller/Controller.php';
 
 $controller = new Controller();
 
+
+$links = ["Home" => "./LandingPage.php"];
+$activeLink = "Home";
+$showButton = false;
+
 $msg = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['Name']) && isset($_POST['Email']) && isset($_POST['Phone']) && isset($_POST['Password'])) {
@@ -30,6 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
 
+
+    <?php include "./Header.php"?>
     <div class="container-40">
 
         <form id="RegisterForm" class="form" method="post">

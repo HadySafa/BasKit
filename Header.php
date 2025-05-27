@@ -11,6 +11,13 @@ if ($controller->isCustomerLogin()) {
     $buttonText = "Login";
 }
 
+$homeLink = './LandingPage.php';
+
+// Determine if the user is an admin and change link
+if ($controller->isAdminLogin()) {
+    $homeLink = './Admin.php'; 
+}
+
 // handle logout request
 $msg = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -66,7 +73,7 @@ function generateButtonHTML($text)
 
             <div class="nested-div-1">
 
-                <a href="./index.php" class="section1">
+                <a href="<?= $homeLink ?>" class="section1">
                     <img src="https://flowbite.com/docs/images/logo.svg" alt="">
                     <h2>BasKit</h2>
                 </a>

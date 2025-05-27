@@ -6,7 +6,7 @@ require_once './Backend/Controller/Controller.php';
 $controller = new Controller();
 
 // modify header
-$links = ["Home" => "./index.php", "Profile" => "./User.php"];
+$links = ["Home" => "./LandingPage.php", "Profile" => "./User.php"];
 $activeLink = "";
 $showButton = true;
 
