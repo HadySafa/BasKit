@@ -1,6 +1,7 @@
 <?php
 require_once './Backend/Controller/Controller.php';
 
+$controller = new Controller();
 
 $controller = new Controller();
 $search = $_GET['query'] ?? '';

@@ -6,6 +6,8 @@ $controller = new Controller();
 
 $categories = $controller->getCategories();
 
+$controller->checkCustomerLogin();
+
 
 $products =isset($_GET['category']) || isset($_GET['price']) ? $controller->showFilterResults() : $controller->getProducts(); // Show filtered or all products
 

@@ -1,3 +1,9 @@
+<?php 
+
+require_once './Backend/Controller/Controller.php';
+$controller = new Controller();
+$controller->checkCustomerLogin(); ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

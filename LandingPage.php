@@ -4,6 +4,8 @@
 require_once './Backend/Controller/Controller.php';
 $controller = new Controller();
 
+$controller->checkCustomerLogin();
+
 $buttonText = "";
 if ($controller->isCustomerLogin()) {
     $buttonText = "Logout";

@@ -4,6 +4,8 @@ require_once './Backend/Controller/Controller.php';
 
 $productId = (int) $_GET['id'];
 $controller = new Controller();
+$controller->checkAdminLogin();
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax'])) {
   $controller->updateProduct($_POST);
@@ -49,8 +51,19 @@ if (isset($_GET['id'])) {
       font-weight: 500;
     }
 
+    .hidden{
+      display: none;
+    }
+
     .btn-rounded {
       border-radius: 50px;
+    }
+
+    .img{
+      min-height: 2rem;
+      max-height: 2rem;
+      min-width: 2rem;
+      max-width: 2rem;
     }
   </style>
 
@@ -60,10 +73,9 @@ if (isset($_GET['id'])) {
 <body>
 
   <div class="container py-5">
-    <h2 class="mb-4 text-center">✏️ Admin - Edit Product</h2>
+    <h2 class="mb-4 text-center"><img src="./Icons//edit.svg" class="img" alt=""> Edit Product</h2>
 
     <div class="form-section mb-5">
-      <h4>Edit Product Details</h4>
 
       <?php if (isset($error)): ?>
         <div class="alert alert-danger"><?= $error ?></div>
@@ -95,7 +107,7 @@ if (isset($_GET['id'])) {
             <input type="text" name="Origin" class="form-control" value="<?= htmlspecialchars($product->getOrigin()) ?>">
           </div>
 
-          <div class="col-md-6 mb-3">
+          <div class="col-md-6 mb-3 hidden">
             <label class="form-label">Barcode</label>
             <input type="text" name="Barcode" class="form-control" value="<?= htmlspecialchars($product->getBarcode()) ?>">
           </div>
@@ -105,7 +117,7 @@ if (isset($_GET['id'])) {
             <input type="number" step="0.01" name="Weight" class="form-control" value="<?= $product->getWeight() ?>">
           </div>
 
-          <div class="col-md-6 mb-3">
+          <div class="col-md-6 mb-3 hidden">
             <label class="form-label">Image</label>
             <input type="file" name="Image" class="form-control">
             <?php if ($product->getImageUrl()): ?>

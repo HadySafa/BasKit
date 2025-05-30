@@ -2,6 +2,11 @@
 <?php
 
 require_once './Backend/Controller/Controller.php';
+$controller = new Controller();
+
+$categories = $controller->getCategories();
+
+$controller->checkCustomerLogin();
 
 
 // Validate ID parameter

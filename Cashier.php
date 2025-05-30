@@ -9,8 +9,8 @@ require_once './Backend/Controller/Controller.php';
 $controller = new Controller();
 
 // modify header
-$links = ["Home" => "./index.php", "Profile" => "./Admin.php"];
-$activeLink = "";
+$links = ["Home" => "./Cashier.php", "Settings" => "./Manage-Account.php"];
+$activeLink = "Home";
 $showButton = true;
 
 // check if the manager is logged in

@@ -5,6 +5,8 @@
 require_once './Backend/Controller/Controller.php';
 
 $controller = new Controller();
+$controller->checkAdminLogin();
+
 
 // modify header
 $links = ["Profile" => "./Admin.php"];

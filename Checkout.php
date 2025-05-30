@@ -6,6 +6,10 @@ require_once './Backend/Controller/Controller.php';
 
 $controller = new Controller();
 
+$controller->checkEmptyCart();
+
+$controller->checkCustomerLogin();
+
 // check that products and quantites are submitted
 $msg = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

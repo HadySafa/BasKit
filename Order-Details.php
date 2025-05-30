@@ -9,11 +9,12 @@ $controller = new Controller();
 // Check if user requesting the page is logged in
 $controller->checkLoggedIn();
 
-// Deliver order - done by the admin
+// Deliver order
 $msg = '';
 if ($controller->isAdmin() && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $msg = $controller->deliverOrder($_POST['Id']);
     if (!$msg) {
+        echo $msg;
         header('Location: ./Order-Details.php?Id=' . $_POST['Id']);
         exit();
     } else {
@@ -21,6 +22,7 @@ if ($controller->isAdmin() && $_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 }
+
 
 // Get the order id requested (by customer or admin)
 $submittedId = '';
@@ -32,6 +34,7 @@ if (!is_numeric($submittedId) || $submittedId < 0) {
     // we can rediret to another page
     exit();
 }
+
 
 // modify header
 $links = ["Home" => "./index.php", "Profile" => "./User.php"];
@@ -52,6 +55,7 @@ if ($controller->isCustomer()) {
     $products = $controller->getOrdersProducts($submittedId);
 }
 
+
 // display error messages
 if (!is_array($order)) {
     echo "<script>alert('$order')</script>";
@@ -64,6 +68,7 @@ if (!is_array($products)) {
 if($msg){
     echo "<script>alert('$msg')</script>";
 }
+
 
 
 // functions to render HTML

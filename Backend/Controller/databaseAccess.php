@@ -216,7 +216,7 @@ class databaseAccess
     public function getAllOrders($status)
     {
 
-        $query = 'SELECT * FROM `order` WHERE Status = ?';
+        $query = 'SELECT * FROM `order` WHERE Status = ? ORDER BY Id DESC';
 
         try {
             self::$connection = self::createConnection();
@@ -389,7 +389,7 @@ class databaseAccess
 
     public function getAllUsers()
     {
-        $query = "SELECT * FROM User";
+        $query = "SELECT * FROM User WHERE Role = 'Customer'";
         try {
             self::$connection = self::createConnection();
             $stmt = self::$connection->prepare($query);

@@ -1,8 +1,6 @@
-<!--This is done by hady-->
+<!-- This is done by hady -->
 
 <?php
-
-// done
 
 require_once './Backend/Controller/Controller.php';
 $controller = new Controller();
@@ -14,7 +12,7 @@ $controller->checkAdminLogin();
 if (!empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST') $controller->logout();
 
 // modify header
-$links = ["Profile" => "./Admin.php"];
+$links = ["Profile" => "./Admin.php","Settings" => "./Manage-Account.php"];
 $activeLink = "Profile";
 $showButton = false;
 

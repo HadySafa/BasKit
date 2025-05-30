@@ -13,14 +13,14 @@ $links = ["Home" => "./LandingPage.php"];
 $activeLink = "Home";
 $showButton = false;
 
-$msg = '';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['Description'])) {
         $msg = $controller->submitFeedback($_POST['Description']);
+        echo "<script>alert('$msg')</script>";
     }
 }
 
-if($msg) echo "<script>alert('$msg')</script>";
 
 ?>
 

@@ -56,10 +56,9 @@ class Controller
     public function isAdmin()
     {
 
-        if(isset($_SEESION["Role"])){
-        return $_SESSION["Role"] == 'Admin';
-    }
-
+        if (isset($_SESSION["Role"])) {
+            return $_SESSION["Role"] == 'Admin';
+        }
     }
 
     public function isPending($status)
@@ -69,15 +68,15 @@ class Controller
 
     public function isCustomer()
     {
-        if(isset($_SEESION["Role"])){
-        return $_SESSION["Role"] == 'Customer';
+        if (isset($_SESSION["Role"])) {
+            return $_SESSION["Role"] == 'Customer';
         }
     }
 
     public function isCashier()
     {
-        if(isset($_SESSION["Role"])){
-        return $_SESSION["Role"] == 'Cashier';
+        if (isset($_SESSION["Role"])) {
+            return $_SESSION["Role"] == 'Cashier';
         }
     }
 
@@ -174,16 +173,16 @@ class Controller
 
         switch ($_SESSION['Role']) {
             case 'Admin':
-                header('Location: Admin.php');
+                header('Location: ./Admin.php');
                 break;
             case 'Cashier':
-                header('Location: Cashier.php');
+                header('Location: ./Cashier.php');
                 break;
             case 'Customer':
-                header('Location: LandingPage.php');
+                header('Location: ./LandingPage.php');
                 break;
             default:
-                header('Location: Login.php');
+                header('Location: ./Login.php');
                 break;
         }
         exit();
@@ -304,7 +303,7 @@ class Controller
                 $productId = $productquantity['productId'];
                 $quantity = $productquantity['quantity'];
                 $price = $productquantity['productPrice'];
-                $this->addProductToOrder($productId, $orderId, $quantity,$price);
+                $this->addProductToOrder($productId, $orderId, $quantity, $price);
             }
             header('Location: ./Orders.php');
             return '';
@@ -313,7 +312,7 @@ class Controller
         return "Failed to perform action, try again later.";
     }
 
-    public function addProductToOrder($productId, $orderId, $quantity,$price)
+    public function addProductToOrder($productId, $orderId, $quantity, $price)
     {
         $tempOrder = new OrderProduct($orderId, $productId, $quantity, $price);
         $response = $this->databaseAccess->addOrderProduct($tempOrder);
@@ -369,6 +368,12 @@ class Controller
             return "No pending orders yet.";
         }
         return 'Failed to get orders, try again later.';
+    }
+
+    public function checkEmptyCart(){
+        if(!isset($_SESSION['cart']) || count($_SESSION['cart']) <= 0){
+            header('Location: ./Cart.php');
+        }
     }
 
     public function getCompletedOrders()
@@ -441,8 +446,7 @@ class Controller
         $tempFeedback = new Feedback(self::getUserId(), $description, 1, self::generateCurrentTimestamp());
         $rowCount = $this->databaseAccess->addFeedback($tempFeedback);
         if ($rowCount > 0) {
-            header('Location: ./Orders.php');
-            return '';
+            return 'Message Sent';
             exit();
         }
         return "Failed to perform action, try again later.";
@@ -722,17 +726,20 @@ class Controller
             return false;
         }
 
-        // Handle image upload
-        $imageUrl = null;
-        if (!empty($fileInfo['Image']['name'])) {
-            $imageName = basename($fileInfo['Image']['name']);
-            $targetDir = "../uploads/";                           // Should be changed
-            $targetFile = $targetDir . time() . "_" . $imageName;
+        // handle image 
+        $fileExtension = pathinfo($fileInfo['Image']['name'], PATHINFO_EXTENSION); // get file extension
 
-            if (move_uploaded_file($fileInfo['Image']['tmp_name'], $targetFile)) {
-                $imageUrl = $targetFile;
-            }
+        return $fileExtension;
+
+        $targetFile  = "Uploads/" . $submittedInfo["Name"] . '.' . $fileExtension;
+
+        if (move_uploaded_file($fileInfo['Image']['tmp_name'], $targetFile)) {
+            echo "succeeded";
+        } else {
+            echo "Failed to upload the image.";
         }
+
+
 
         $tempProduct = new Product(
             $submittedInfo['Name'],
@@ -741,7 +748,7 @@ class Controller
             $submittedInfo['Description'],
             $submittedInfo['Origin'],
             $submittedInfo['Barcode'],
-            $imageUrl,
+            $targetFile,
             $submittedInfo['Weight']
         );
 
@@ -1100,26 +1107,26 @@ class Controller
         }
 
         $prompt = "The user wants to buy the following items: " . json_encode($userItems) . "\n\n" .
-    "The store has the following available products: " . json_encode($availableNames) . "\n\n" .
-    "For each user item, suggest the most appropriate or similar product from the store. " .
-    "Respond ONLY with a JSON array of objects, where each object contains 'userItem' and 'suggestedProduct'.";
+            "The store has the following available products: " . json_encode($availableNames) . "\n\n" .
+            "For each user item, suggest the most appropriate or similar product from the store. " .
+            "Respond ONLY with a JSON array of objects, where each object contains 'userItem' and 'suggestedProduct'.";
 
 
         $debug[] = "Prompt for AI: " . $prompt;
 
-       $rawSuggestions = $this->fetchOpenAISuggestions($prompt);
-       $debug[] = 'Raw AI suggestions: ' . json_encode($rawSuggestions);
+        $rawSuggestions = $this->fetchOpenAISuggestions($prompt);
+        $debug[] = 'Raw AI suggestions: ' . json_encode($rawSuggestions);
 
-      // If AI returned multiple lines as an array of strings, join and decode
-      if (is_array($rawSuggestions) && count($rawSuggestions) > 1 && is_string($rawSuggestions[0])) {
-        $jsonString = implode("", $rawSuggestions);  
-        $decoded = json_decode($jsonString, true);
-        if (is_array($decoded)) {
-            $rawSuggestions = $decoded;
-        } else {
-            echo json_encode(['status' => 'error', 'message' => 'Failed to decode AI suggestions', 'debug' => $debug]);
-            exit;
-        }
+        // If AI returned multiple lines as an array of strings, join and decode
+        if (is_array($rawSuggestions) && count($rawSuggestions) > 1 && is_string($rawSuggestions[0])) {
+            $jsonString = implode("", $rawSuggestions);
+            $decoded = json_decode($jsonString, true);
+            if (is_array($decoded)) {
+                $rawSuggestions = $decoded;
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to decode AI suggestions', 'debug' => $debug]);
+                exit;
+            }
         }
 
         if (!is_array($rawSuggestions)) {
@@ -1141,7 +1148,7 @@ class Controller
                         'id' => $product['id'],
                         'name' => $product['name'],
                         'description' => $product['description'] ?? '',
-                        'matchedTerm' => $userItem 
+                        'matchedTerm' => $userItem
                     ];
                     break;
                 }
@@ -1166,7 +1173,7 @@ class Controller
             if (!empty($input['items']) && is_array($input['items'])) {
                 $_SESSION['shoppingList'] = $input['items'];
 
-         
+
                 echo json_encode(['status' => 'success']);
             } else {
                 echo json_encode([

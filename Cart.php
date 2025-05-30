@@ -1,9 +1,12 @@
 <?php
 
+
 session_start();
 
 include './Backend/Controller/Controller.php';
 $controller = new Controller();
+
+$controller->checkCustomerLogin();
 
 if($controller->isAdmin()){
     header('Location: ./Admin.php');

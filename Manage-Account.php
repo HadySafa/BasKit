@@ -6,8 +6,8 @@ require_once './Backend/Controller/Controller.php';
 
 $controller = new Controller();
 
-// check if the customer is logged in
-$controller->checkCustomerLogin();
+// check if logged in
+$controller->checkLoggedIn();
 
 $msg = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
 
-    <div class="container-60">
+    <div class="container-40">
 
         <form id="ChangePasswordForm" class="form" method="post">
 

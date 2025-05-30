@@ -5,6 +5,9 @@ require_once './Backend/Controller/Controller.php';
 $userId = (int) $_GET['id'];
 $controller = new Controller();
 
+$controller->checkAdminLogin();
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax'])) {
   $controller->updateUser($_POST);
   
@@ -37,13 +40,22 @@ if (isset($_GET['id'])) {
     .form-section, .user-card { background-color: #fff; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); padding: 20px; }
     .form-label { font-weight: 500; }
     .btn-rounded { border-radius: 50px; }
+    .img{
+      min-height: 2rem;
+      max-height: 2rem;
+      min-width: 2rem;
+      max-width: 2rem;
+    }
+    .hidden{
+      display: none;
+    }
   </style>
 
 </head>
 <body>
 
 <div class="container py-5">
-  <h2 class="mb-4 text-center">✏️ Admin - Edit User</h2>
+  <h2 class="mb-4 text-center"><img src="./Icons//edit.svg" class="img" alt=""> Edit User</h2>
 
   <div class="form-section mb-5">
     <h4>Edit User Details</h4>
@@ -60,6 +72,24 @@ if (isset($_GET['id'])) {
         <div class="col-md-6 mb-3">
           <label class="form-label">User Name</label>
           <input type="text" name="Name" class="form-control" value="<?= htmlspecialchars($user->getName()) ?>" required>
+        </div>
+
+        <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Id</label>
+          <input type="number" name="Id" class="form-control" value="<?= htmlspecialchars($user->getId()) ?>" required>
+        </div>
+
+
+
+        <div class="col-md-6 mb-3 hidden">
+          <label class="form-label">Email</label>
+          <input type="text" name="Email" class="form-control" value="<?= htmlspecialchars($user->getEmail()) ?>" required>
+        </div>
+
+        <div class="col-md-6 mb-3 hidden">
+          <label class="form-label">Password</label>
+          <input type="text" name="Password" class="form-control" value="<?= htmlspecialchars($user->getPassword()) ?>">
         </div>
 
 
@@ -81,7 +111,7 @@ if (isset($_GET['id'])) {
           </select>
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="col-md-6 mb-3 hidden">
           <label class="form-label">Role</label>
           <input type="text" name="Role" class="form-control" value="<?= htmlspecialchars($user->getRole()) ?>">
         </div>
