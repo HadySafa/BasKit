@@ -310,14 +310,14 @@ class databaseAccess
 
     public function getProductIdByBarcode($barcode)
     {
-        $query = "SELECT Id FROM Product WHERE Barcode = ?";
+        $query = "SELECT * FROM Product WHERE Barcode = ?";
 
         try {
             self::$connection = self::createConnection();
             $result = self::$connection->prepare($query);
             $result->execute([$barcode]);
             $data = $result->fetchAll(PDO::FETCH_ASSOC);
-            if (is_array($data) && isset($data[0]['Id'])) return $data[0]["Id"];
+            if (is_array($data) && isset($data[0]['Id'])) return $data[0];
             return -1;
         } catch (PDOException $e) {
             return -1;
@@ -332,6 +332,38 @@ class databaseAccess
             self::$connection = self::createConnection();
             $result = self::$connection->prepare($query);
             $result->execute([$userId, $sessionId, $basketId]);
+            return $result->rowCount();
+        } catch (PDOException $e) {
+            return -1;
+        }
+    }
+
+    public function getShoppingList($userId){
+
+        $query = "SELECT * FROM shoppinglistitem WHERE UserId = ?";
+
+        try {
+            self::$connection = self::createConnection();
+            $result = self::$connection->prepare($query);
+            $result->execute([$userId]);
+            $data = $result->fetchAll(PDO::FETCH_ASSOC);
+            if (count($data) > 0) {
+                return $data;
+            }
+            return [];
+        } catch (PDOException) {
+            return null;
+        }
+    }
+
+    public function addItemToShoppingList($userId, $text)
+    {
+        $query = "INSERT INTO shoppinglistitem (userId, description) VALUES (?, ?)";
+
+        try {
+            self::$connection = self::createConnection();
+            $result = self::$connection->prepare($query);
+            $result->execute([$userId, $text]);
             return $result->rowCount();
         } catch (PDOException $e) {
             return -1;
@@ -705,6 +737,22 @@ class databaseAccess
         return $stmt->execute([$id]);
     }
 
+    public function getUserShoppingListItems($id)
+    {
+        $query = "SELECT Description FROM shoppinglistitem WHERE UserId = ?";
+        self::$connection = self::createConnection();
+        $stmt = self::$connection->prepare($query);
+        return $stmt->execute([$id]);
+    }
+
+    public function deleteShoppingList($id)
+    {
+        $query = "DELETE FROM shoppinglistitem WHERE UserId = ?";
+        self::$connection = self::createConnection();
+        $stmt = self::$connection->prepare($query);
+        return $stmt->execute([$id]);
+    }
+
 
     public function getBestsellingProducts()
     {
@@ -746,4 +794,10 @@ class databaseAccess
             return [];
         }
     }
+
+
+
+
+
+    
 }

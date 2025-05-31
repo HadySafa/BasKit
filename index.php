@@ -16,6 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action'])) {
             $controller->saveShoppingListFromInput();
             exit();
 
+        case 'addItemToShoppingList':
+            $received = json_decode(file_get_contents("php://input"), true);
+            $description = $received['description'];
+            $response = $controller->addItemToShoppingList($description);
+            echo json_encode($response);
+            exit();
+
         default:
             echo json_encode(['status' => 'error', 'message' => 'Action not recognized for POST']);
             exit();
@@ -32,9 +39,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
             exit();
 
         case 'getShoppingList':
-            $controller->getShoppingList();
+            $items = $controller->getShoppingList();
+            if(count($items) > 0){
+                echo json_encode([
+                    'status' => 'success',
+                    'items' => $items
+                ]);
+            }
+            else{
+                echo json_encode([
+                    'status' => 'failed',
+                    'items' => 'empty/error'
+                ]);
+            }
             exit();
-
+            
+        case 'clearShoppingList':
+            $controller->clearShoppingList();
+            exit();
 
         case 'getListSuggestions':
             $controller->getListSuggestions();

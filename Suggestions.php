@@ -109,7 +109,7 @@ $cartItems = $_SESSION['cart'];
           <div class="row align-items-center flex-grow-1">
             <!-- Product image -->
             <div class="col-md-4 mb-3 mb-md-0">
-              <img src="<?= htmlspecialchars($item['productImage']) ?>" alt="Product Image" class="img-fluid rounded">
+              <img src="<?= $item['productImage'] ?>" alt="Product Image" class="img-fluid rounded">
             </div>
             <!-- Product info -->
             <div class="col-md-8">
@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   <div class="card h-100 shadow-sm border-0">
                     <div class="card-body">
                       <h5 class="card-title">${item.name}</h5>
-                      <p class="card-text text-muted">${product.description}</p>
+                      <p class="card-text text-muted">${item.description}</p>
                       <p class="card-text font-weight-bold">$${product.price}</p>
 
                       <!-- Add to cart form -->

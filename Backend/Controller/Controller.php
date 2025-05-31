@@ -234,7 +234,7 @@ class Controller
                 // user validated
                 if (is_array($info)) {
                     $this->startPhysicalSession($tempUser, $info);
-                    header('Location: ./Cart.php');
+                    header('Location: ./BasKit.php');
                 } else {
                     $this->startSession($tempUser);
                     $this->redirectToDashboard();
@@ -460,11 +460,11 @@ class Controller
     {
         // check basket id
 
-        $productId = $this->databaseAccess->getProductIdByBarcode($barcode);
+        $product = $this->databaseAccess->getProductIdByBarcode($barcode);
+        $productId = $product['Id'];
 
         if ($productId > 0) { // valid product id & no errors, add it to session
-            $this->addProductToSession($productId);
-            header("Location: ./Cart.php");
+            $this->addProductToSession($product);
             return true;
         } else {
             return false;
@@ -472,12 +472,19 @@ class Controller
     }
 
     // change this to match mr amir's code
-    private function addProductToSession($id)
+    private function addProductToSession($product)
     {
-        if (array_key_exists($id, $_SESSION["Products"])) { // product exists, increment the quantity
-            $_SESSION["Products"][$id]++;
+        if (array_key_exists($product["Id"], $_SESSION["cart"])) { // product exists, increment the quantity
+            $_SESSION['cart'][$product["Id"]]['quantity']++;
         } else { // product doesn't exists, add it
-            $_SESSION["Products"][$id] = 1;
+            $_SESSION['cart'][] = [
+                'productId' => $product['Id'],
+                'productName' => $product["Name"],
+                'productPrice' => $product['Price'],
+                'productImage' => $product['ImageURL'],
+                'productDescription' => $product['Description'],
+                'quantity' => 1,
+            ];
         }
     }
 
@@ -489,10 +496,10 @@ class Controller
         $_SESSION["Role"] = $user->getRole();
         $_SESSION["OrderType"] = $info["Type"];
         $_SESSION["BasketId"] = $info["Basket"];
-        $_SESSION["Products"] = [];
         $this->saveSession($info["Basket"]);
     }
 
+    // save session in the database
     private function saveSession($basketId)
     {
         $rowCount = $this->databaseAccess->addToSession($this->getUserId(), $basketId, $this->getSessionId());
@@ -917,16 +924,18 @@ class Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getSuggestions') {
 
-            $cartItems = $this->getUserCartItems();
+            $cartItems = $this->getUserCartItems();  // get items in the cart
 
-            $availableProducts = $this->getAvailableProducts();
+            $availableProducts = $this->getAvailableProducts(); // available products in the shop
 
-            $cartNames = array_map(fn($item) => $item['name'], $cartItems);
-            $availableNames = array_map(fn($item) => $item['name'], $availableProducts);
+            $cartNames = array_map(fn($item) => $item['name'], $cartItems); // get names of the items in the cart
+            $availableNames = array_map(fn($item) => $item['name'], $availableProducts); // get names of the available products in the shop
 
-            $cartProductList = implode("\n", $cartNames);
+            // combine into a string seperated by \n
+            $cartProductList = implode("\n", $cartNames);  
             $availableProductList = implode("\n", $availableNames);
 
+            // cart is empty -> error
             if (empty($cartProductList)) {
                 echo json_encode(['status' => 'error', 'message' => 'Cart is empty.']);
                 exit;
@@ -1053,18 +1062,8 @@ class Controller
 
 
     //Shopping List 
-
-
-    public function getUserShoppingListItems(): array
-    {
-        $list = $_SESSION['shoppingList'] ?? [];
-
-        if (!is_array($list)) {
-            return [];
-        }
-
-        // Filter out empty or whitespace-only items, then trim each item
-        return array_values(array_filter(array_map('trim', $list), fn($item) => $item !== ''));
+    public function getUserShoppingListItems(){
+        return $this->databaseAccess->getUserShoppingListItems($this->getUserId());
     }
 
 
@@ -1186,7 +1185,24 @@ class Controller
         }
     }
 
+    public function addItemToShoppingList($description){
 
+        if($this->databaseAccess->addItemToShoppingList($this->getUserId(),$description)  > 0){
+            return [
+                'status' => 'success',
+                'message' => 'Added to database successfully.'
+            ];
+        }
+        else{
+            return [
+                'status' => 'error',
+                'message' => 'Invalid input. Expecting JSON with "items" array.'
+            ];
+        }
+        
+    }
+
+    /*
     public function getShoppingList()
     {
         header('Content-Type: application/json');
@@ -1197,4 +1213,17 @@ class Controller
         }
         exit;
     }
+    */
+    
+    public function getShoppingList()
+    {
+        return $items = $this->databaseAccess->getShoppingList($this->getUserId());
+        exit;
+    }
+
+    public function clearShoppingList(){
+
+        return $this->databaseAccess->deleteShoppingList($this->getUserId());
+    }
+    
 }

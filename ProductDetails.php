@@ -42,11 +42,11 @@ if (!$product) {
 <!-- Navbar -->
 
 
-<div class="container my-5">
+<div class="container my-5" style="background-color: white;">
   <div class="row">
     <!-- Product Image -->
     <div class="col-md-6">
-      <img src="<?= 'http://localhost/Senior-Project/' . htmlspecialchars($product->getImageUrl()) ?>" 
+      <img src="<?= $product->getImageUrl() ?>" 
            alt="Product Image" class="img-fluid rounded shadow">
     </div>
 
